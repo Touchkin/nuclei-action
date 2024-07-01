@@ -13,6 +13,7 @@ export async function generateGithubReportFile(token, reportConfigFileName = 'gi
         owner: GITHUB_REPOSITORY_OWNER,
         token,
         "project-name": GITHUB_REPOSITORY,
+        "update-existing": true
     };
 
     let content = {};

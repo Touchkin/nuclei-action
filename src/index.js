@@ -74,7 +74,11 @@ async function run() {
     if (flags) params.push(...parseFlagsToArray(flags));
 
     // If everything is fine and github-report is set, generate the yaml config file.
-    if (reportConfig != null) {
+    if (githubReport == true) {
+      // create default config file with name `github-report.yaml`
+      await generateGithubReportFile(githubToken, reportConfig);
+      params.push(`-rc=${reportConfig}`);
+    } else if (reportConfig != null) {
       await generateGithubReportFile(githubToken, reportConfig);
       params.push(`-rc=${reportConfig}`);
     }
