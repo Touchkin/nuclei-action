@@ -20,6 +20,7 @@ export async function generateGithubReportFile(token, reportConfigFileName = 'gi
     if (reportConfigFileName) {
         try {
             const data = await fs.promises.readFile(path.join(GITHUB_WORKSPACE, reportConfigFileName), 'utf8');
+            console.log(data);
             const { github, ...rest } = yaml.load(data);
             content = { ...rest, github: { ...gitHubRepoConfig, ...github } };
         } catch (err) {
@@ -29,7 +30,9 @@ export async function generateGithubReportFile(token, reportConfigFileName = 'gi
         content.github = gitHubRepoConfig;
     }
 
-    const githubConfigYml = yaml.dump(content, { flowLevel: 3 });
+    const githubConfigYml = yaml.dump(content, { flowLevel: 3 })
+    
+    console.log(githubConfigYml);
 
     try {
         await fs.promises.writeFile(path.join(GITHUB_WORKSPACE, reportConfigFileName), githubConfigYml);
