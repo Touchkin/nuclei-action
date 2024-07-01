@@ -10753,6 +10753,7 @@ async function generateGithubReportFile(token, reportConfigFileName = 'github-re
         owner: GITHUB_REPOSITORY_OWNER,
         token,
         "project-name": GITHUB_REPOSITORY,
+        "update-existing": true
     };
 
     let content = {};
@@ -10760,6 +10761,7 @@ async function generateGithubReportFile(token, reportConfigFileName = 'github-re
     if (reportConfigFileName) {
         try {
             const data = await external_fs_.promises.readFile(external_path_.join(GITHUB_WORKSPACE, reportConfigFileName), 'utf8');
+            console.log(data);
             const { github, ...rest } = load(data);
             content = { ...rest, github: { ...gitHubRepoConfig, ...github } };
         } catch (err) {
@@ -10769,7 +10771,9 @@ async function generateGithubReportFile(token, reportConfigFileName = 'github-re
         content.github = gitHubRepoConfig;
     }
 
-    const githubConfigYml = dump(content, { flowLevel: 3 });
+    const githubConfigYml = dump(content, { flowLevel: 3 })
+    
+    console.log(githubConfigYml);
 
     try {
         await external_fs_.promises.writeFile(external_path_.join(GITHUB_WORKSPACE, reportConfigFileName), githubConfigYml);
@@ -10859,7 +10863,11 @@ async function run() {
     if (flags) params.push(...parseFlagsToArray(flags));
 
     // If everything is fine and github-report is set, generate the yaml config file.
-    if (reportConfig != null) {
+    if (githubReport == true) {
+      // create default config file with name `github-report.yaml`
+      await generateGithubReportFile(githubToken, reportConfig);
+      params.push(`-rc=${reportConfig}`);
+    } else if (reportConfig != null) {
       await generateGithubReportFile(githubToken, reportConfig);
       params.push(`-rc=${reportConfig}`);
     }
